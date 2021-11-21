@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eventbus-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: events
+  template:
+    metadata:
+      labels:
+        app: events
+    spec:
+      containers:
+        - name: events
+          image: hartmutseitter/events:latest
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-bus-clusterip-srv
+spec:
+  selector:
+    app: events
+  type: ClusterIP
+  ports:
+    - name: hsevent
+      protocol: TCP
+      port: 4005
+      targetPort: 4005
